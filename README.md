@@ -21,13 +21,13 @@ Once SDL2 is installed, compile the program using the following command in your 
 
     g++ main.cpp -o main -lmingw32 -lSDL2main -lSDL2
 ___
-###3️⃣ Run the App
+### 3️⃣ Run the App
 After successful compilation, run the executable file:
 
 
     .\main.exe
 ___
-###✨ Features
+### ✨ Features
 Interactive Light Source:
 Click anywhere on the screen to move the light source and release to stop.
 
@@ -35,14 +35,14 @@ Real-Time Visualization:
 Observe the dynamic behavior of light rays interacting with objects in the environment.
 
 ___
-###💡 How It Works
+### 💡 How It Works
 Raytracing:
 Simulates how light rays interact with surfaces.
 
 User Interaction:
 Move the light source with your mouse for dynamic control.
 ___
-###🎉 Enjoy the Experience!
+### 🎉 Enjoy the Experience!
 Unleash your curiosity and explore the fascinating world of raytracing!
 Feel free to fork this repository and experiment further. Contributions are always welcome. 😊
 ---
