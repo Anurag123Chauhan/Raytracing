@@ -1,14 +1,22 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <math.h>
 
 const double SCREEN_WIDTH = 900;
 const double SCREEN_HEIGHT = 600;
+const double Number_Of_Rays = 500;
 
 struct Circle
 {
     double x, y;
     double radius;
     bool movingUp = false;
+};
+
+struct Ray
+{
+    double x_start, y_start, x_end, y_end;
+    double angle;
 };
 
 void FillCircle(SDL_Renderer *renderer, struct Circle circle)
@@ -48,6 +56,37 @@ void MoveVertically(Circle &circle, float speed)
     }
 }
 
+void FillRays(struct Circle circle, struct Ray rays[], SDL_Renderer *renderer)
+{
+    for (int i = 0; i < Number_Of_Rays; i++)
+    {
+        struct Ray ray = rays[i];
+        int end_of_screen = 0;
+        int object_hit = 0;
+        double steps = 1.0;
+
+        while (!end_of_screen && !object_hit)
+        {
+            double x_draw = ray.x_start + steps * cos(ray.angle);
+            double y_draw = ray.y_start + steps * sin(ray.angle);
+
+            SDL_RenderDrawPoint(renderer, (int)x_draw, (int)y_draw);
+
+            if (x_draw < 0 || x_draw > SCREEN_WIDTH || y_draw < 0 || y_draw > SCREEN_HEIGHT)
+            {
+                end_of_screen = 1;
+            }
+            else if ((x_draw - circle.x) * (x_draw - circle.x) +
+                         (y_draw - circle.y) * (y_draw - circle.y) <=
+                     circle.radius * circle.radius)
+            {
+                object_hit = 1;
+            }
+            steps += 1.0;
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -76,7 +115,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     // optimizing the renderer
-    const int TARGET_FPS = 60;
+    const int TARGET_FPS = 1000;
     const int FRAME_DELAY = 1000 / TARGET_FPS;
     Uint32 frameStart;
     int frameTime;
@@ -86,9 +125,20 @@ int main(int argc, char *argv[])
     bool quit = false;
 
     // Defining the circle
-    Circle circle1 = {200, 200, 50};
+    Circle circle1 = {200, 200, 30};
     Circle circle2 = {400, 400, 90, true};
     float circleSpeed = 2.0f;
+
+    // Initialize rays
+    Ray rays[static_cast<int>(Number_Of_Rays)];
+    for (int i = 0; i < Number_Of_Rays; i++)
+    {
+        rays[i] = {
+            circle1.x, circle1.y,         // Start position
+            0, 0,                         // End position (will be calculated)
+            2 * M_PI * i / Number_Of_Rays // Angle
+        };
+    }
 
     while (!quit)
     {
@@ -107,7 +157,12 @@ int main(int argc, char *argv[])
                 circle1.y = event.motion.y;
             }
         }
-
+        // Update ray start positions to follow circle1
+        for (int i = 0; i < Number_Of_Rays; i++)
+        {
+            rays[i].x_start = circle1.x;
+            rays[i].y_start = circle1.y;
+        }
         MoveVertically(circle2, circleSpeed);
 
         // Making the background black
@@ -120,7 +175,9 @@ int main(int argc, char *argv[])
         // Drawing the first circle with White color
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         FillCircle(renderer, circle2);
-
+        // Draw rays
+        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+        FillRays(circle2, rays, renderer);
         // Presenting the renderer(Updating the screen)
         SDL_RenderPresent(renderer);
 
