@@ -10,7 +10,7 @@ This application provides a visual representation of raytracing. It allows you t
 ### 1️⃣ Install SDL2 Libraries
 Before running the application, you need to install the SDL2 libraries.  
 Follow this tutorial to set up SDL2:  
-👉 [Watch the tutorial here](#)
+👉 [Watch the tutorial here](https://youtu.be/QM4WW8hcsPU?si=qR14jw4-sPIr2lWU)
 
 ---
 
